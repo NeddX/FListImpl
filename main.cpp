@@ -9,9 +9,11 @@ int main()
     stl::ForwardList<int> b = { 5, 1, 2, 5 };
     b                       = f;
 
-    for (auto e : b)
-    {
-        std::cout << e << " ";
-    }
+    std::cout << b << std::endl;
+    std::cout << b.Size() << std::endl;
+
+    b.Erase(b.end());
+
+    std::cout << b << std::endl;
     return 0;
 }

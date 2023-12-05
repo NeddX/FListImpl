@@ -22,8 +22,8 @@ namespace stl {
         if (!other.m_Head)
             return;
 
-        auto* current      = other.m_Head;
-        m_Head             = new Node(current->obj);
+        m_Head             = new Node(other.m_Head->obj);
+        auto* current      = other.m_Head->next;
         auto* this_current = m_Head;
         while (current)
         {
@@ -77,14 +77,30 @@ namespace stl {
     template <typename T>
     inline std::pair<Node<T>*, Node<T>*> ForwardList<T>::GetPreviousAndLast() noexcept
     {
-        Node* current = m_Head;
-        Node* prev    = nullptr;
-        while (current)
+        Node* first_last  = m_Head;
+        Node* second_last = nullptr;
+        Node* current     = m_Head;
+        while (current->next)
         {
-            prev    = current;
+            second_last = first_last;
+            first_last  = first_last->next;
+            current     = current->next;
+        }
+        return { second_last, first_last };
+    }
+
+    template <typename T>
+    inline Node<T>* ForwardList<T>::GetNodeAt(const usize index)
+    {
+        usize i       = 0;
+        auto* current = m_Head;
+        while (current->next)
+        {
+            if (i++ == index)
+                return current;
             current = current->next;
         }
-        return { prev, current };
+        return nullptr;
     }
 
     template <typename T>
@@ -141,6 +157,30 @@ namespace stl {
     template <typename T>
     constexpr void ForwardList<T>::Resize(const usize newSize)
     {
+        if (m_Length == newSize)
+            return;
+
+        auto prev_two = GetPreviousAndLast();
+        if (newSize > m_Length)
+        {
+            auto* current = prev_two.second;
+            for (usize i = 0; i < newSize - m_Length; ++i)
+            {
+                current->next = new Node();
+                current       = current->next;
+            }
+            m_Length = newSize;
+        }
+        else if (newSize < m_Length)
+        {
+            for (usize i = 0; i < m_Length - newSize; ++i)
+            {
+                prev_two = GetPreviousAndLast();
+                delete prev_two.second;
+                prev_two.first->next = nullptr;
+            }
+            m_Length = newSize;
+        }
     }
 
     template <typename T>
@@ -151,16 +191,58 @@ namespace stl {
     }
 
     template <typename T>
+    void ForwardList<T>::Erase(const ConstIterator pos)
+    {
+        if (!Empty())
+        {
+            auto  index    = (pos == end()) ? pos - begin() - 1 : pos - begin();
+            auto* node     = GetNodeAt(index);
+            auto* backward = GetNodeAt(index - 1);
+            auto* forward  = GetNodeAt(index + 1);
+
+            if (backward)
+            {
+                if (forward)
+                    backward->next = forward;
+                else
+                    backward->next = nullptr;
+            }
+            else
+            {
+                m_Head = forward;
+            }
+            delete node;
+        }
+        else
+            throw std::out_of_range("Tried calling Erase() on an empty vector.");
+    }
+
+    template <typename T>
+    void ForwardList<T>::Erase(const ConstIterator first, const ConstIterator last)
+    {
+        /*
+        if (!Empty())
+        {
+            const usize prev_size = m_Size;
+            T*          temp      = m_Buffer;
+            m_Size -= last - first;
+            m_Capacity = m_Size * 2;
+            m_Buffer   = new T[m_Capacity];
+
+            std::copy(temp, temp + (first - temp), m_Buffer);
+            std::copy(temp + (last - first) + (first - temp), temp + prev_size, m_Buffer + (first - temp));
+
+            delete[] temp;
+        }
+        else
+            throw std::out_of_range("Tried calling Erase() on an empty vector.");
+        */
+    }
+
+    template <typename T>
     inline T& ForwardList<T>::operator[](const usize index) noexcept
     {
-        usize i       = 0;
-        auto* current = m_Head;
-        while (current->next)
-        {
-            if (i++ == index)
-                return current->obj;
-            current = current->next;
-        }
+        return GetNodeAt(index)->obj;
     }
 
     template <typename T>
@@ -172,8 +254,9 @@ namespace stl {
         if (m_Head)
             Drop();
 
-        auto* current      = other.m_Head;
-        m_Head             = new Node(current->obj);
+        m_Head             = new Node(other.m_Head->obj);
+        m_Length           = other.m_Length;
+        auto* current      = other.m_Head->next;
         auto* this_current = m_Head;
         while (current)
         {
