@@ -6,8 +6,12 @@ int main()
     for (size_t i = 0; i < 10; ++i)
         f.Push(rand() % 256);
 
-    auto b = f;
+    stl::ForwardList<int> b = { 5, 1, 2, 5 };
+    b                       = f;
 
-    std::cout << b << std::endl;
+    for (auto e : b)
+    {
+        std::cout << e << " ";
+    }
     return 0;
 }

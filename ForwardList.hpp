@@ -164,6 +164,44 @@ namespace stl {
     }
 
     template <typename T>
+    inline ForwardList<T>& ForwardList<T>::operator=(const ForwardList<T>& other)
+    {
+        if (&other == this || !other.m_Head)
+            return *this;
+
+        if (m_Head)
+            Drop();
+
+        auto* current      = other.m_Head;
+        m_Head             = new Node(current->obj);
+        auto* this_current = m_Head;
+        while (current)
+        {
+            this_current->next = new Node(current->obj);
+            current            = current->next;
+            this_current       = this_current->next;
+        }
+
+        return *this;
+    }
+
+    template <typename T>
+    inline ForwardList<T>& ForwardList<T>::operator=(ForwardList<T>&& other) noexcept
+    {
+        if (&other == this)
+            return *this;
+
+        if (m_Head)
+            Drop();
+
+        m_Head         = other.m_Head;
+        m_Length       = other.m_Length;
+        other.m_Head   = nullptr;
+        other.m_Length = 0;
+        return *this;
+    }
+
+    template <typename T>
     inline T ForwardList<T>::Pop()
     {
         auto prev_two = GetPreviousAndLast();

@@ -38,7 +38,6 @@ namespace stl {
             Node() noexcept;
             Node(const T& obj) noexcept;
         };
-        /* Later...
         class ConstIterator;
         class Iterator
         {
@@ -46,19 +45,19 @@ namespace stl {
 
             using iterator_category = std::forward_iterator_tag;
             using difference_type   = ptrdiff;
-            using value_type        = ForwardList<T>;
-            using pointer           = value_type*;
-            using reference         = value_type&;
+            using value_type        = Node;
+            using pointer           = ForwardList<T>*;
+            using reference         = T&;
 
         private:
-            pointer m_Ptr;
-            usize   m_Index;
+            value_type* m_Ptr;
+            usize       m_Index;
 
         public:
-            Iterator(pointer ptr = nullptr, const usize index = 0) noexcept : m_Ptr(ptr), m_Index(index) {}
+            Iterator(value_type* ptr = nullptr, const usize index = 0) noexcept : m_Ptr(ptr), m_Index(index) {}
 
         public:
-            constexpr reference operator*() const noexcept { return m_Ptr[index]; }
+            constexpr reference operator*() const noexcept { return m_Ptr->operator[](m_Index); }
             constexpr pointer   operator->() const noexcept { return m_Ptr; };
             inline Iterator&    operator++() noexcept
             {
@@ -71,25 +70,30 @@ namespace stl {
                 ++(*this);
                 return t;
             }
-            constexpr ptrdiff operator-(const Iterator& other) const noexcept { return m_Ptr - other.m_Ptr; }
-            inline Iterator   operator+(const uintptr disp) const noexcept
+            constexpr difference_type operator-(const Iterator& other) const noexcept
+            {
+                return m_Index - other.m_Index;
+            }
+            inline Iterator operator+(const uintptr disp) const noexcept
             {
                 Iterator temp = *this;
-                temp.m_Ptr += disp;
+                temp.m_Index += disp;
                 return temp;
             };
             inline Iterator operator-(const uintptr disp) const noexcept
             {
                 Iterator temp = *this;
-                temp.m_Ptr -= disp;
+                temp.m_Index -= disp;
                 return temp;
             }
 
         public:
-            friend bool operator==(const Iterator& lhv, const Iterator& rhv) noexcept { return lhv.m_Ptr == rhv.m_Ptr; }
+            friend bool operator==(const Iterator& lhv, const Iterator& rhv) noexcept
+            {
+                return lhv.m_Ptr == rhv.m_Ptr && lhv.m_Index == rhv.m_Index;
+            }
             friend bool operator!=(const Iterator& lhv, const Iterator& rhv) noexcept { return !(lhv == rhv); }
         };
-        */
 
     private:
         Node* m_Head;
@@ -110,6 +114,8 @@ namespace stl {
         constexpr bool  Empty() const noexcept { return m_Length == 0; }
         constexpr usize Size() const noexcept { return m_Length; }
         constexpr usize MaxSize() const noexcept { return std::numeric_limits<usize>::max() / sizeof(Node); }
+        inline Iterator begin() noexcept { return Iterator(m_Head, 0); }
+        inline Iterator end() noexcept { return Iterator(m_Head, m_Length); }
 
     public:
         constexpr void  Push(const T& e);
@@ -122,7 +128,9 @@ namespace stl {
         constexpr void  Swap(ForwardList<T>& other);
 
     public:
-        inline T& operator[](const usize index) noexcept;
+        inline T&              operator[](const usize index) noexcept;
+        inline ForwardList<T>& operator=(const ForwardList<T>& other);
+        inline ForwardList<T>& operator=(ForwardList<T>&& other) noexcept;
 
     public:
         friend std::ostream& operator<<(std::ostream& stream, const ForwardList<T>& other) noexcept
