@@ -104,7 +104,7 @@ namespace stl {
     }
 
     template <typename T>
-    constexpr void ForwardList<T>::Push(const T& e)
+    inline void ForwardList<T>::Push(const T& e)
     {
         if (!m_Head)
             m_Head = new Node(e);
@@ -119,7 +119,7 @@ namespace stl {
     }
 
     template <typename T>
-    constexpr void ForwardList<T>::PushFront(const T& e)
+    inline void ForwardList<T>::PushFront(const T& e)
     {
         if (!m_Head)
             m_Head = new Node(e);
@@ -149,13 +149,13 @@ namespace stl {
     }
 
     template <typename T>
-    constexpr void ForwardList<T>::Clear()
+    inline void ForwardList<T>::Clear()
     {
         Drop();
     }
 
     template <typename T>
-    constexpr void ForwardList<T>::Resize(const usize newSize)
+    inline void ForwardList<T>::Resize(const usize newSize)
     {
         if (m_Length == newSize)
             return;
@@ -219,12 +219,12 @@ namespace stl {
     {
         if (!Empty())
         {
-            const auto         start_index = first - begin();
-            const auto         len         = last - first;
-            auto*              forward     = GetNodeAt(last - ConstIterator(begin()) + 1);
-            auto*              backward    = GetNodeAt(first - ConstIterator(begin()) - 1);
-            std::vector<Node*> nodes(len);
+            const auto start_index = first - begin();
+            const auto len         = last - first + 1;
+            auto*      forward     = GetNodeAt(last - begin() + 1);
+            auto*      backward    = GetNodeAt(first - begin() - 1);
 
+            std::vector<Node*> nodes(len);
             for (usize i = 0; i < len; ++i)
                 nodes[i] = GetNodeAt(start_index + i);
 
@@ -238,11 +238,16 @@ namespace stl {
 
             for (const auto& e : nodes)
                 delete e;
-
-            m_Length -= len;
         }
         else
             throw std::out_of_range("Tried calling Erase() on an empty list.");
+    }
+
+    template <typename T>
+    void ForwardList<T>::Reverse()
+    {
+        auto* current = m_Head;
+        while (current) {}
     }
 
     template <typename T>

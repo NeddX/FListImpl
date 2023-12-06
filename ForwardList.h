@@ -179,16 +179,17 @@ namespace stl {
         inline ConstIterator end() const noexcept { return ConstIterator(this, m_Length); }
 
     public:
-        constexpr void  Push(const T& e);
-        constexpr void  PushFront(const T& e);
+        inline void     Push(const T& e);
+        inline void     PushFront(const T& e);
         inline T        Pop();
         inline T&       Frost();
         inline const T& Frost() const;
-        constexpr void  Clear();
-        constexpr void  Resize(const usize newSize);
+        inline void     Clear();
+        inline void     Resize(const usize newSize);
         constexpr void  Swap(ForwardList<T>& other);
         void            Erase(const ConstIterator pos);
         void            Erase(const ConstIterator first, const ConstIterator last);
+        void            Reverse();
 
     public:
         inline T&              operator[](const usize index) noexcept;
