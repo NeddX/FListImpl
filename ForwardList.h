@@ -10,6 +10,7 @@
 #include <iterator>
 #include <limits>
 #include <utility>
+#include <vector>
 
 using usize   = std::size_t;
 using ptrdiff = std::ptrdiff_t;

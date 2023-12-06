@@ -3,17 +3,17 @@
 int main()
 {
     stl::ForwardList<int> f;
-    for (size_t i = 0; i < 10; ++i)
+    for (size_t i = 0; i < 2; ++i)
         f.Push(rand() % 256);
 
-    stl::ForwardList<int> b = { 5, 1, 2, 5 };
-    b                       = f;
+    // stl::ForwardList<int> b; // = { 5, 1, 2, 5 };
+    // b = f;
 
-    std::cout << b << std::endl;
-    std::cout << b.Size() << std::endl;
+    std::cout << f << std::endl;
+    std::cout << f.Size() << std::endl;
 
-    b.Erase(b.end());
+    f.Erase(f.begin(), f.end() - 1);
 
-    std::cout << b << std::endl;
+    std::cout << f << std::endl;
     return 0;
 }

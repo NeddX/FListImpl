@@ -94,7 +94,7 @@ namespace stl {
     {
         usize i       = 0;
         auto* current = m_Head;
-        while (current->next)
+        while (current)
         {
             if (i++ == index)
                 return current;
@@ -201,17 +201,14 @@ namespace stl {
             auto* forward  = GetNodeAt(index + 1);
 
             if (backward)
-            {
                 if (forward)
                     backward->next = forward;
                 else
                     backward->next = nullptr;
-            }
             else
-            {
                 m_Head = forward;
-            }
             delete node;
+            --m_Length;
         }
         else
             throw std::out_of_range("Tried calling Erase() on an empty vector.");
@@ -220,23 +217,32 @@ namespace stl {
     template <typename T>
     void ForwardList<T>::Erase(const ConstIterator first, const ConstIterator last)
     {
-        /*
         if (!Empty())
         {
-            const usize prev_size = m_Size;
-            T*          temp      = m_Buffer;
-            m_Size -= last - first;
-            m_Capacity = m_Size * 2;
-            m_Buffer   = new T[m_Capacity];
+            const auto         start_index = first - begin();
+            const auto         len         = last - first;
+            auto*              forward     = GetNodeAt(last - ConstIterator(begin()) + 1);
+            auto*              backward    = GetNodeAt(first - ConstIterator(begin()) - 1);
+            std::vector<Node*> nodes(len);
 
-            std::copy(temp, temp + (first - temp), m_Buffer);
-            std::copy(temp + (last - first) + (first - temp), temp + prev_size, m_Buffer + (first - temp));
+            for (usize i = 0; i < len; ++i)
+                nodes[i] = GetNodeAt(start_index + i);
 
-            delete[] temp;
+            if (backward)
+                if (forward)
+                    backward->next = forward;
+                else
+                    backward->next = nullptr;
+            else
+                m_Head = forward;
+
+            for (const auto& e : nodes)
+                delete e;
+
+            m_Length -= len;
         }
         else
-            throw std::out_of_range("Tried calling Erase() on an empty vector.");
-        */
+            throw std::out_of_range("Tried calling Erase() on an empty list.");
     }
 
     template <typename T>
