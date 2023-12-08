@@ -6,7 +6,7 @@ int main()
     stl::ForwardList<int> g{ 0, 0, 0 };
 
     std::cout << f << std::endl;
-    f.Insert(f.begin(), g.begin(), g.end());
+    f.Insert(f.end(), g.begin(), g.end());
     std::cout << f << std::endl;
     return 0;
 }

@@ -243,6 +243,8 @@ namespace stl {
 
             for (const auto& e : nodes)
                 delete e;
+
+            m_Length -= len;
         }
         else
             throw std::out_of_range("Tried calling Erase() on an empty list.");
@@ -260,22 +262,40 @@ namespace stl {
         else
             prev->next = new_node;
         new_node->next = next;
+        ++m_Length;
     }
 
     template <typename T>
     void ForwardList<T>::Insert(const ConstIterator pos, const ConstIterator first, const ConstIterator last)
     {
         const auto index = pos - begin();
+        const auto len   = last - first;
         auto*      prev  = GetNodeAt(index - 1);
         auto*      next  = GetNodeAt(index);
 
-        auto* current = prev;
-        for (auto it = first; it != last; ++it)
+        if (!prev)
         {
-            current->next = new Node(*it);
-            current       = current->next;
+            auto* new_head = new Node(*first);
+            auto* current  = new_head;
+            for (auto it = first + 1; it != last; ++it)
+            {
+                current->next = new Node(*it);
+                current       = current->next;
+            }
+            m_Head        = new_head;
+            current->next = next;
         }
-        current->next = next;
+        else
+        {
+            auto* current = prev;
+            for (auto it = first; it != last; ++it)
+            {
+                current->next = new Node(*it);
+                current       = current->next;
+            }
+            current->next = next;
+        }
+        m_Length += len;
     }
 
     template <typename T>
@@ -373,6 +393,18 @@ namespace stl {
         delete prev_two.second;
         prev_two.first->next = nullptr;
         --m_Length;
+        return std::move(obj);
+    }
+
+    template <typename T>
+    inline T ForwardList<T>::PopFront()
+    {
+        auto  obj = std::move(m_Head->obj);
+        auto* t   = m_Head;
+        m_Head    = m_Head->next;
+        delete t;
+        --m_Length;
+        return std::move(obj);
     }
 } // namespace stl
 

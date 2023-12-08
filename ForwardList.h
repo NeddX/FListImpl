@@ -185,6 +185,7 @@ namespace stl {
         inline void     Push(const T& e);
         inline void     PushFront(const T& e);
         inline T        Pop();
+        inline T        PopFront();
         inline T&       Frost();
         inline const T& Frost() const;
         inline void     Clear();
