@@ -92,14 +92,19 @@ namespace stl {
     template <typename T>
     inline Node<T>* ForwardList<T>::GetNodeAt(const usize index)
     {
-        usize i       = 0;
+        if (index < 0 || !m_Head)
+            return nullptr;
+
         auto* current = m_Head;
+        auto  count   = 0;
+
         while (current)
         {
-            if (i++ == index)
+            if (count++ == index)
                 return current;
             current = current->next;
         }
+
         return nullptr;
     }
 
@@ -244,10 +249,59 @@ namespace stl {
     }
 
     template <typename T>
+    void ForwardList<T>::Insert(const ConstIterator pos, const T& e)
+    {
+        const auto index    = pos - begin();
+        auto*      prev     = GetNodeAt(index - 1);
+        auto*      next     = GetNodeAt(index);
+        auto*      new_node = new Node(e);
+        if (!prev)
+            m_Head = new_node;
+        else
+            prev->next = new_node;
+        new_node->next = next;
+    }
+
+    template <typename T>
     void ForwardList<T>::Reverse()
     {
-        auto* current = m_Head;
-        while (current) {}
+        Node* current = m_Head;
+        Node* prev    = nullptr;
+        Node* next    = current->next;
+        while (current)
+        {
+            next          = current->next;
+            current->next = prev;
+            prev          = current;
+            current       = next;
+        }
+        m_Head = prev;
+    }
+
+    template <typename T>
+    void ForwardList<T>::Sort()
+    {
+        for (auto i = 0; i < m_Length; ++i)
+        {
+            auto  j    = 0;
+            auto* prev = m_Head;
+            for (auto* d = m_Head; d && j < m_Length - i; d = d->next, ++j)
+            {
+                auto* n = d->next;
+                if (!n)
+                    break;
+                if (d->obj > n->obj)
+                {
+                    d->next = n->next;
+                    n->next = d;
+                    if (m_Head == d)
+                        m_Head = n;
+                    else
+                        prev->next = n;
+                }
+                prev = d;
+            }
+        }
     }
 
     template <typename T>

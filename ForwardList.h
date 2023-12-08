@@ -189,7 +189,10 @@ namespace stl {
         constexpr void  Swap(ForwardList<T>& other);
         void            Erase(const ConstIterator pos);
         void            Erase(const ConstIterator first, const ConstIterator last);
+        void            Insert(const ConstIterator pos, const T& e);
+        void            Insert(const ConstIterator pos, const ConstIterator first, const ConstIterator last);
         void            Reverse();
+        void            Sort();
 
     public:
         inline T&              operator[](const usize index) noexcept;
