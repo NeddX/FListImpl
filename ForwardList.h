@@ -112,7 +112,10 @@ namespace stl {
             ConstIterator(pointer ptr = nullptr, const usize index = 0) noexcept : m_Ptr(ptr), m_Index(index) {}
 
         public:
-            constexpr reference   operator*() const noexcept { return m_Ptr->operator[](m_Index); }
+            constexpr reference operator*() const noexcept
+            {
+                return (reference)((value_type*)m_Ptr)->operator[](m_Index);
+            }
             constexpr pointer     operator->() const noexcept { return m_Ptr; };
             inline ConstIterator& operator++() noexcept
             {

@@ -263,6 +263,22 @@ namespace stl {
     }
 
     template <typename T>
+    void ForwardList<T>::Insert(const ConstIterator pos, const ConstIterator first, const ConstIterator last)
+    {
+        const auto index = pos - begin();
+        auto*      prev  = GetNodeAt(index - 1);
+        auto*      next  = GetNodeAt(index);
+
+        auto* current = prev;
+        for (auto it = first; it != last; ++it)
+        {
+            current->next = new Node(*it);
+            current       = current->next;
+        }
+        current->next = next;
+    }
+
+    template <typename T>
     void ForwardList<T>::Reverse()
     {
         Node* current = m_Head;
