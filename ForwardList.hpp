@@ -2,9 +2,9 @@
 #define FORWARD_LIST_IMPL_H
 
 // TODO: Remove.
-#include "ForwardList.h"
+//#include "ForwardList.h"
 
-namespace stl {
+namespace my {
     template <typename T>
     using Node = ForwardList<T>::Node;
 
@@ -90,7 +90,7 @@ namespace stl {
     }
 
     template <typename T>
-    inline Node<T>* ForwardList<T>::GetNodeAt(const usize index)
+    inline ForwardList<T>::Node* ForwardList<T>::GetNodeAt(const usize index)
     {
         if (index < 0 || !m_Head)
             return nullptr;

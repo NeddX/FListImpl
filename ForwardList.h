@@ -25,7 +25,7 @@ using i32     = std::int32_t;
 using u64     = std::uint64_t;
 using i64     = std::int64_t;
 
-namespace stl {
+namespace my {
     template <typename T>
     class ForwardList
     {
@@ -218,8 +218,8 @@ namespace stl {
             return stream;
         }
     };
-} // namespace stl
+} // namespace my 
 
 // TODO: Uncomment.
-// #include "ForwardList.hpp"
+#include "ForwardList.hpp"
 #endif // FORWARD_LIST_H
